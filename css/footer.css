@@ -1,0 +1,105 @@
+/* Footer Styles */
+    .dashboard-footer {
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        color: #ecf0f1;
+        padding: 20px 25px;
+        margin-top: 40px;
+        border-top: 1px solid #4a6572;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .footer-section {
+        flex: 1;
+        min-width: 300px;
+    }
+
+    .footer-logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 8px;
+    }
+
+    .footer-logo i {
+        font-size: 1.8em;
+        color: #3498db;
+        background: rgba(255,255,255,0.1);
+        padding: 10px;
+        border-radius: 8px;
+    }
+
+    .footer-logo h5 {
+        margin: 0;
+        color: white;
+        font-weight: 600;
+        font-size: 1.1em;
+    }
+
+    .footer-desc {
+        color: #bdc3c7;
+        margin: 0;
+        font-size: 0.9em;
+        padding-left: 52px;
+    }
+
+    .footer-copyright {
+        color: #95a5a6;
+        margin: 0;
+        font-size: 0.85em;
+        line-height: 1.5;
+        text-align: right;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .dashboard-footer {
+            margin-top: 25px;
+            padding: 20px 0;
+        }
+        
+        .footer-content {
+            flex-direction: column;
+            text-align: center;
+            padding: 0 15px;
+            gap: 15px;
+        }
+        
+        .footer-section {
+            min-width: 100%;
+        }
+        
+        .footer-logo {
+            justify-content: center;
+        }
+        
+        .footer-desc {
+            padding-left: 0;
+        }
+        
+        .footer-copyright {
+            text-align: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .footer-logo {
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .footer-logo h5 {
+            font-size: 1em;
+        }
+    }
+    

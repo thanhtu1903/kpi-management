@@ -1,7 +1,6 @@
 <?php
 require_once '../includes/config.php';
 require_once '../includes/auth.php';
-require_once '../includes/header.php';
 
 redirectIfNotLoggedIn();
 checkPermission(['giangvien']);
@@ -15,356 +14,439 @@ checkPermission(['giangvien']);
     <title>Lịch giảng dạy - Hệ thống KPI</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        /* CSS từ file bạn gửi - đã tối ưu */
-        .tab-nav {
-            display: flex;
-            background: #f0f0f0;
-            border-radius: 8px;
-            margin: 20px 0;
-            padding: 5px;
-        }
-        .tab-btn {
-            flex: 1;
-            padding: 12px 20px;
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            font-size: 16px;
-            border-radius: 5px;
-            transition: all 0.3s;
-        }
-        .tab-btn.active {
-            background: #3498db;
-            color: white;
-            font-weight: bold;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        .button-bar {
-            margin: 20px 0;
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-            font-weight: bold;
-        }
-        input[type="text"] {
-            border: none;
-            border-bottom: 1px solid #ccc;
-            padding: 5px;
-            width: 200px;
-        }
-        .header-left, .header-right {
-            width: 30%;
-        }
-        .header-center {
-            width: 40%;
-            text-align: center;
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-        .info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-        .footer {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 40px;
-        }
-    </style>
+    <link rel="stylesheet" href="../css/teaching_schedule.css">
 </head>
 <body>
+    <?php include '../includes/header.php'; ?>
+    <?php include '../includes/sidebar.php'; ?>
 
-    <div class="container-fluid py-4">
-        <div class="dashboard-container">
-            <!-- Welcome Section -->
-            <div class="welcome-section">
-                <div class="welcome-content">
-                    <h1 class="welcome-title">
-                        <i class="fas fa-calendar-alt me-2"></i>Lịch giảng dạy
-                    </h1>
-                    <p class="welcome-subtitle">Quản lý lịch trình giảng dạy và bài thực hành</p>
-                </div>
+    <!-- Main Content -->
+<div class="dashboard-container">
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="welcome-title">
+                    <i class="fas fa-calendar-alt me-3"></i>Lịch giảng dạy
+                </h1>
+                <p class="welcome-subtitle">Quản lý lịch trình giảng dạy và bài thực hành</p>
             </div>
-
-            <!-- Nội dung chính từ file bạn gửi -->
-            <div class="dashboard-card">
-                <div class="card-body">
-                    <!-- TAB NAVIGATION -->
-                    <div class="tab-nav">
-                        <button class="tab-btn active" onclick="switchTab('lich-trinh')">
-                            <i class="fas fa-clipboard-list me-2"></i>Lịch trình giảng dạy
-                        </button>
-                        <button class="tab-btn" onclick="switchTab('thuc-hanh')">
-                            <i class="fas fa-flask me-2"></i>Bài học thực hành
-                        </button>
-                    </div>
-
-                    <!-- TAB 1: LỊCH TRÌNH GIẢNG DẠY -->
-                    <div id="lich-trinh" class="tab-content active">
-                        <!-- Nội dung tab 1 giữ nguyên từ file bạn gửi -->
-                        <header>
-                            <div class="header-left">
-                                <p>Khoa: <?php 
-                                    $stmt = $pdo->prepare("SELECT department_name FROM departments WHERE id = ?");
-                                    $stmt->execute([$_SESSION['department_id']]);
-                                    $dept = $stmt->fetch();
-                                    echo $dept ? $dept['department_name'] : 'Công nghệ thông tin';
-                                ?></p>
-                                <p>Năm học: 2025 - 2026</p>
-                                <p>Học kỳ: 1</p>
-                            </div>
-                            <div class="header-center">
-                                <h4>LỊCH TRÌNH GIẢNG DẠY</h4>
-                            </div>
-                            <div class="header-right">
-                                <p><strong>Giảng viên:</strong> <?php echo $_SESSION['full_name']; ?></p>
-                                <p><strong>Ngày tạo:</strong> <?php echo date('d/m/Y'); ?></p>
-                            </div>
-                        </header>
-
-                        <!-- KHUNG THÔNG TIN HỌC PHẦN -->
-                        <section class="info">
-                            <div class="left">
-                                <p><strong>Học phần:</strong> <input type="text" id="hocphan-lt"></p>
-                                <p><strong>Mã số học phần:</strong> <input type="text" id="mahp-lt"></p>
-                            </div>
-                            <div class="right">
-                                <p><strong>Tổng số giờ giảng:</strong> <input type="text" id="gio_tong-lt"></p>
-                                <p><strong>Số giờ giảng trực tiếp:</strong> <input type="text" id="gio_tructiep-lt"></p>
-                            </div>
-                        </section>
-
-                        <!-- BẢNG LỊCH TRÌNH -->
-                        <div class="table-responsive">
-                            <table class="schedule table table-bordered">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>TT</th>
-                                        <th>TÊN ĐỀ MỤC</th>
-                                        <th>SỐ GIỜ</th>
-                                        <th>THỨ TỰ BÀI HỌC</th>
-                                        <th>NỘI DUNG</th>
-                                        <th>THỜI GIAN</th>
-                                        <th>GHI CHÚ</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="schedule-body-lt">
-                                    <tr>
-                                        <td contenteditable="true">1</td>
-                                        <td contenteditable="true"></td>
-                                        <td contenteditable="true"></td>
-                                        <td contenteditable="true"></td>
-                                        <td contenteditable="true"></td>
-                                        <td contenteditable="true"></td>
-                                        <td contenteditable="true"></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- TAB 2: BÀI HỌC THỰC HÀNH -->
-                    <div id="thuc-hanh" class="tab-content">
-                        <!-- Nội dung tab 2 tương tự, đã rút gọn -->
-                        <header>
-                            <div class="header-left">
-                                <p>Khoa: <?php echo $dept ? $dept['department_name'] : 'Công nghệ thông tin'; ?></p>
-                                <p>Năm học: 2025 - 2026</p>
-                                <p>Học kỳ: 1</p>
-                            </div>
-                            <div class="header-center">
-                                <h4>BÀI HỌC THỰC HÀNH</h4>
-                            </div>
-                            <div class="header-right">
-                                <p><strong>Giảng viên:</strong> <?php echo $_SESSION['full_name']; ?></p>
-                                <p><strong>Ngày tạo:</strong> <?php echo date('d/m/Y'); ?></p>
-                            </div>
-                        </header>
-
-                        <section class="info">
-                            <div class="left">
-                                <p><strong>Học phần:</strong> <input type="text" id="hocphan-th"></p>
-                                <p><strong>Mã số học phần:</strong> <input type="text" id="mahp-th"></p>
-                            </div>
-                            <div class="right">
-                                <p><strong>Tổng số giờ thực hành:</strong> <input type="text" id="gio_tong-th"></p>
-                                <p><strong>Số bài thực hành:</strong> <input type="text" id="so_bai-th"></p>
-                            </div>
-                        </section>
-
-                        <div class="table-responsive">
-                            <table class="schedule table table-bordered">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>TT</th>
-                                        <th>TÊN BÀI THỰC HÀNH</th>
-                                        <th>SỐ GIỜ</th>
-                                        <th>MỤC TIÊU</th>
-                                        <th>NỘI DUNG</th>
-                                        <th>YÊU CẦU</th>
-                                        <th>THỜI GIAN</th>
-                                        <th>ĐÁNH GIÁ</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="schedule-body-th">
-                                    <tr>
-                                        <td contenteditable="true">1</td>
-                                        <td contenteditable="true"></td>
-                                        <td contenteditable="true"></td>
-                                        <td contenteditable="true"></td>
-                                        <td contenteditable="true"></td>
-                                        <td contenteditable="true"></td>
-                                        <td contenteditable="true"></td>
-                                        <td contenteditable="true"></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Nút chức năng -->
-                    <div class="button-bar">
-                        <button id="addRowBtn" class="btn btn-success">
-                            <i class="fas fa-plus me-2"></i>Thêm dòng
-                        </button>
-                        <button id="saveBtn" class="btn btn-primary">
-                            <i class="fas fa-save me-2"></i>Lưu tạm
-                        </button>
-                        <button id="exportBtn" class="btn btn-info">
-                            <i class="fas fa-download me-2"></i>Xuất file
-                        </button>
-                    </div>
+            <div class="col-md-4 text-end">
+                <div class="welcome-meta">
+                    <span class="meta-item">
+                        <i class="fas fa-building me-2"></i>
+                        <?php 
+                            $stmt = $pdo->prepare("SELECT department_name FROM departments WHERE id = ?");
+                            $stmt->execute([$_SESSION['department_id']]);
+                            $dept = $stmt->fetch();
+                            echo $dept ? $dept['department_name'] : 'Chưa phân khoa';
+                        ?>
+                    </span>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-        // CHUYỂN TAB
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-        }
+    <!-- Main Content -->
+    <div class="dashboard-card">
+        <div class="card-body">
+            <!-- TAB NAVIGATION -->
+            <div class="tab-nav">
+                <button class="tab-btn active" onclick="switchTab('lich-trinh')">
+                    <i class="fas fa-clipboard-list me-2"></i>Lịch trình lý thuyết
+                </button>
+                <button class="tab-btn" onclick="switchTab('thuc-hanh')">
+                    <i class="fas fa-flask me-2"></i>Lịch trình thực hành
+                </button>
+            </div>
 
-        // THÊM DÒNG MỚI
-        document.getElementById("addRowBtn").addEventListener("click", () => {
-            const activeTab = document.querySelector('.tab-content.active');
-            const tbodyId = activeTab.id === 'lich-trinh' ? 'schedule-body-lt' : 'schedule-body-th';
-            const tbody = document.getElementById(tbodyId);
-            
-            const rowCount = tbody.children.length + 1;
-            const row = document.createElement("tr");
-            
-            if (activeTab.id === 'lich-trinh') {
-                // 7 cột cho lịch trình
-                row.innerHTML = `
-                    <td contenteditable="true">${rowCount}</td>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                `;
-            } else {
-                // 8 cột cho thực hành
-                row.innerHTML = `
-                    <td contenteditable="true">${rowCount}</td>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                `;
-            }
-            
-            tbody.appendChild(row);
-        });
+            <!-- TAB 1: LỊCH TRÌNH GIẢNG DẠY -->
+            <div id="lich-trinh" class="tab-content active">
+                <!-- Header Information -->
+                <div class="schedule-header">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p class="mb-1"><strong>Khoa:</strong> <?php echo $dept ? $dept['department_name'] : 'Công nghệ thông tin'; ?></p>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-2">
+                                        <label class="form-label-sm"><strong>Năm học:</strong></label>
+                                        <select class="form-select form-select-sm" id="namhoc-lt">
+                                            <?php foreach ($school_years as $year): ?>
+                                                <option value="<?php echo $year; ?>" <?php echo $year === ($current_year - 1) . ' - ' . $current_year ? 'selected' : ''; ?>>
+                                                    <?php echo $year; ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-2">
+                                        <label class="form-label-sm"><strong>Học kỳ:</strong></label>
+                                        <select class="form-select form-select-sm" id="hocky-lt">
+                                            <?php foreach ($semesters as $semester): ?>
+                                                <option value="<?php echo $semester; ?>" <?php echo $semester == 1 ? 'selected' : ''; ?>>
+                                                    Học kỳ <?php echo $semester; ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <h4 class="mb-0">LỊCH TRÌNH GIẢNG DẠY</h4>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <p class="mb-1"><strong>Giảng viên:</strong> <?php echo $_SESSION['full_name']; ?></p>
+                            <p class="mb-0"><strong>Ngày tạo:</strong> <?php echo date('d/m/Y'); ?></p>
+                        </div>
+                    </div>
+                </div>
 
-        // LƯU DỮ LIỆU
-        document.getElementById("saveBtn").addEventListener("click", () => {
-            const activeTab = document.querySelector('.tab-content.active');
-            const isLichTrinh = activeTab.id === 'lich-trinh';
-            
-            const data = {
-                type: isLichTrinh ? 'schedule' : 'practice',
-                saved_at: new Date().toLocaleString('vi-VN')
-            };
-            
-            localStorage.setItem('teachingData', JSON.stringify(data));
-            alert('✅ Đã lưu tạm thời! Dữ liệu sẽ được lưu trong trình duyệt.');
-        });
+                <!-- Course Information -->
+                <div class="info-section">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Học phần:</strong></label>
+                                <input type="text" class="form-control form-control-custom" id="hocphan-lt" placeholder="Nhập tên học phần">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Mã số học phần:</strong></label>
+                                <input type="text" class="form-control form-control-custom" id="mahp-lt" placeholder="Nhập mã học phần">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Tổng số giờ giảng:</strong></label>
+                                <input type="text" class="form-control form-control-custom" id="gio_tong-lt" placeholder="Số giờ">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Số giờ giảng trực tiếp:</strong></label>
+                                <input type="text" class="form-control form-control-custom" id="gio_tructiep-lt" placeholder="Số giờ trực tiếp">
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-        // XUẤT FILE
-        document.getElementById("exportBtn").addEventListener("click", () => {
-            const activeTab = document.querySelector('.tab-content.active');
-            const isLichTrinh = activeTab.id === 'lich-trinh';
-            const title = isLichTrinh ? 'Lich_trinh_giang_day' : 'Bai_thuc_hanh';
-            
-            // Tạo nội dung HTML để xuất
-            const tabContent = activeTab.innerHTML;
-            const htmlContent = `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>${title}</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; margin: 20px; }
-                        table { width: 100%; border-collapse: collapse; }
-                        th, td { border: 1px solid #000; padding: 8px; }
-                        th { background: #f0f0f0; }
-                    </style>
-                </head>
-                <body>
-                    <h2>${title} - <?php echo $_SESSION['full_name']; ?></h2>
-                    <p>Ngày xuất: <?php echo date('d/m/Y H:i'); ?></p>
-                    ${tabContent}
-                </body>
-                </html>
-            `;
-            
-            // Tạo và tải file
-            const blob = new Blob([htmlContent], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${title}_<?php echo date('Y-m-d'); ?>.html`;
-            a.click();
-            URL.revokeObjectURL(url);
-        });
-    </script>
+                <!-- Schedule Table -->
+                <div class="table-responsive">
+                    <table class="table schedule-table">
+                        <thead>
+                            <tr>
+                                <th width="5%">TT</th>
+                                <th width="20%">TÊN ĐỀ MỤC</th>
+                                <th width="10%">SỐ GIỜ</th>
+                                <th width="10%">THỨ TỰ BÀI HỌC</th>
+                                <th width="25%">NỘI DUNG</th>
+                                <th width="15%">THỜI GIAN</th>
+                                <th width="15%">GHI CHÚ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="schedule-body-lt">
+                            <tr>
+                                <td contenteditable="true" class="text-center">1</td>
+                                <td contenteditable="true"></td>
+                                <td contenteditable="true" class="text-center"></td>
+                                <td contenteditable="true" class="text-center"></td>
+                                <td contenteditable="true"></td>
+                                <td contenteditable="true"></td>
+                                <td contenteditable="true"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
+            <!-- TAB 2: BÀI HỌC THỰC HÀNH -->
+            <div id="thuc-hanh" class="tab-content">
+                <!-- Header Information -->
+                <div class="schedule-header">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p class="mb-1"><strong>Khoa:</strong> <?php echo $dept ? $dept['department_name'] : 'Công nghệ thông tin'; ?></p>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-2">
+                                        <label class="form-label-sm"><strong>Năm học:</strong></label>
+                                        <select class="form-select form-select-sm" id="namhoc-th">
+                                            <?php foreach ($school_years as $year): ?>
+                                                <option value="<?php echo $year; ?>" <?php echo $year === ($current_year - 1) . ' - ' . $current_year ? 'selected' : ''; ?>>
+                                                    <?php echo $year; ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-2">
+                                        <label class="form-label-sm"><strong>Học kỳ:</strong></label>
+                                        <select class="form-select form-select-sm" id="hocky-th">
+                                            <?php foreach ($semesters as $semester): ?>
+                                                <option value="<?php echo $semester; ?>" <?php echo $semester == 1 ? 'selected' : ''; ?>>
+                                                    Học kỳ <?php echo $semester; ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <h4 class="mb-0">BÀI HỌC THỰC HÀNH</h4>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <p class="mb-1"><strong>Giảng viên:</strong> <?php echo $_SESSION['full_name']; ?></p>
+                            <p class="mb-0"><strong>Ngày tạo:</strong> <?php echo date('d/m/Y'); ?></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Course Information -->
+                <div class="info-section">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Học phần:</strong></label>
+                                <input type="text" class="form-control form-control-custom" id="hocphan-th" placeholder="Nhập tên học phần">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Mã số học phần:</strong></label>
+                                <input type="text" class="form-control form-control-custom" id="mahp-th" placeholder="Nhập mã học phần">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Tổng số giờ thực hành:</strong></label>
+                                <input type="text" class="form-control form-control-custom" id="gio_tong-th" placeholder="Số giờ">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Số bài thực hành:</strong></label>
+                                <input type="text" class="form-control form-control-custom" id="so_bai-th" placeholder="Số bài">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Practice Table -->
+                <div class="table-responsive">
+                    <table class="table schedule-table">
+                        <thead>
+                            <tr>
+                                <th width="5%">TT</th>
+                                <th width="15%">TÊN BÀI THỰC HÀNH</th>
+                                <th width="8%">SỐ GIỜ</th>
+                                <th width="15%">MỤC TIÊU</th>
+                                <th width="20%">NỘI DUNG</th>
+                                <th width="12%">YÊU CẦU</th>
+                                <th width="10%">THỜI GIAN</th>
+                                <th width="15%">ĐÁNH GIÁ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="schedule-body-th">
+                            <tr>
+                                <td contenteditable="true" class="text-center">1</td>
+                                <td contenteditable="true"></td>
+                                <td contenteditable="true" class="text-center"></td>
+                                <td contenteditable="true"></td>
+                                <td contenteditable="true"></td>
+                                <td contenteditable="true"></td>
+                                <td contenteditable="true"></td>
+                                <td contenteditable="true"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="button-bar">
+                <button id="addRowBtn" class="btn btn-success btn-action">
+                    <i class="fas fa-plus"></i>Thêm dòng
+                </button>
+                <button id="saveBtn" class="btn btn-primary btn-action">
+                    <i class="fas fa-save"></i>Lưu tạm
+                </button>
+                <button id="exportBtn" class="btn btn-info btn-action">
+                    <i class="fas fa-download"></i>Xuất file
+                </button>
+                <button id="printBtn" class="btn btn-warning btn-action">
+                    <i class="fas fa-print"></i>In ấn
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
     <?php include '../includes/footer.php'; ?>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // CHUYỂN TAB
+    function switchTab(tabName) {
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.getElementById(tabName).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    // THÊM DÒNG MỚI
+    document.getElementById("addRowBtn").addEventListener("click", () => {
+        const activeTab = document.querySelector('.tab-content.active');
+        const tbodyId = activeTab.id === 'lich-trinh' ? 'schedule-body-lt' : 'schedule-body-th';
+        const tbody = document.getElementById(tbodyId);
+        
+        const rowCount = tbody.children.length + 1;
+        const row = document.createElement("tr");
+        
+        if (activeTab.id === 'lich-trinh') {
+            row.innerHTML = `
+                <td contenteditable="true" class="text-center">${rowCount}</td>
+                <td contenteditable="true"></td>
+                <td contenteditable="true" class="text-center"></td>
+                <td contenteditable="true" class="text-center"></td>
+                <td contenteditable="true"></td>
+                <td contenteditable="true"></td>
+                <td contenteditable="true"></td>
+            `;
+        } else {
+            row.innerHTML = `
+                <td contenteditable="true" class="text-center">${rowCount}</td>
+                <td contenteditable="true"></td>
+                <td contenteditable="true" class="text-center"></td>
+                <td contenteditable="true"></td>
+                <td contenteditable="true"></td>
+                <td contenteditable="true"></td>
+                <td contenteditable="true"></td>
+                <td contenteditable="true"></td>
+            `;
+        }
+        
+        tbody.appendChild(row);
+    });
+
+    // LƯU DỮ LIỆU
+    document.getElementById("saveBtn").addEventListener("click", () => {
+        const activeTab = document.querySelector('.tab-content.active');
+        const isLichTrinh = activeTab.id === 'lich-trinh';
+        
+        // Lấy thông tin năm học và học kỳ
+        const namhoc = isLichTrinh ? 
+            document.getElementById('namhoc-lt').value : 
+            document.getElementById('namhoc-th').value;
+        const hocky = isLichTrinh ? 
+            document.getElementById('hocky-lt').value : 
+            document.getElementById('hocky-th').value;
+        
+        const data = {
+            type: isLichTrinh ? 'schedule' : 'practice',
+            namhoc: namhoc,
+            hocky: hocky,
+            saved_at: new Date().toLocaleString('vi-VN'),
+            timestamp: new Date().getTime()
+        };
+        
+        localStorage.setItem('teachingData', JSON.stringify(data));
+        
+        // Hiển thị thông báo
+        alert('✅ Đã lưu tạm thời! Dữ liệu sẽ được lưu trong trình duyệt.');
+    });
+
+    // XUẤT FILE
+    document.getElementById("exportBtn").addEventListener("click", () => {
+        const activeTab = document.querySelector('.tab-content.active');
+        const isLichTrinh = activeTab.id === 'lich-trinh';
+        
+        // Lấy thông tin năm học và học kỳ
+        const namhoc = isLichTrinh ? 
+            document.getElementById('namhoc-lt').value : 
+            document.getElementById('namhoc-th').value;
+        const hocky = isLichTrinh ? 
+            document.getElementById('hocky-lt').value : 
+            document.getElementById('hocky-th').value;
+        
+        const title = isLichTrinh ? 'Lich_trinh_giang_day' : 'Bai_thuc_hanh';
+        
+        // Tạo nội dung HTML để xuất
+        const tabContent = activeTab.innerHTML;
+        const htmlContent = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>${title}</title>
+                <meta charset="UTF-8">
+                <style>
+                    body { font-family: Arial, sans-serif; margin: 20px; color: #333; }
+                    .header { background: #3498db; color: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
+                    table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                    th, td { border: 1px solid #ddd; padding: 10px 8px; text-align: left; }
+                    th { background: #2c3e50; color: white; font-weight: bold; }
+                    .footer { margin-top: 30px; padding-top: 20px; border-top: 2px solid #3498db; }
+                    .form-select-sm { padding: 0.25rem 0.5rem; font-size: 0.875rem; }
+                    .form-label-sm { font-size: 0.875rem; margin-bottom: 0.25rem; }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <h2>${title.toUpperCase()}</h2>
+                    <p><strong>Năm học:</strong> ${namhoc}</p>
+                    <p><strong>Học kỳ:</strong> ${hocky}</p>
+                    <p><strong>Giảng viên:</strong> <?php echo $_SESSION['full_name']; ?></p>
+                    <p><strong>Ngày xuất:</strong> <?php echo date('d/m/Y H:i'); ?></p>
+                </div>
+                ${activeTab.innerHTML}
+                <div class="footer">
+                    <p><strong>Trường ĐH SPKT Vĩnh Long</strong> - Hệ thống Quản lý KPI Giảng viên</p>
+                </div>
+            </body>
+            </html>
+        `;
+        
+        const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${title}_${namhoc.replace(' - ', '_')}_HK${hocky}_<?php echo $_SESSION['user_id']; ?>_${new Date().getTime()}.html`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    });
+
+    // IN ẤN
+    document.getElementById("printBtn").addEventListener("click", () => {
+        window.print();
+    });
+</script>
+<script>
+    // JavaScript cho toggle sidebar
+    document.getElementById('sidebarToggle').addEventListener('click', function() {
+        document.body.classList.toggle('collapsed');
+    });
+
+    // JavaScript cho mobile menu
+    document.getElementById('mobileMenuToggle').addEventListener('click', function() {
+        document.querySelector('.sidebar').classList.toggle('mobile-open');
+    });
+
+    // Đóng sidebar khi click ra ngoài trên mobile
+    document.addEventListener('click', function(event) {
+        const sidebar = document.querySelector('.sidebar');
+        const mobileToggle = document.getElementById('mobileMenuToggle');
+        
+        if (window.innerWidth <= 768 && 
+            !sidebar.contains(event.target) && 
+            !mobileToggle.contains(event.target)) {
+            sidebar.classList.remove('mobile-open');
+        }
+    });
+</script>
+<script src="../js/sidebar.js"></script>
 </body>
 </html>

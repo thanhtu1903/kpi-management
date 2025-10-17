@@ -16,10 +16,26 @@ checkPermission(['giangvien']);
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="../css/dashboard.css" rel="stylesheet">
     <link href="../css/giangvien.css" rel="stylesheet">
+    <style>
+        /* CSS cho sidebar và layout mới */
+        
+        .dashboard-container {
+            margin-left: 280px;
+            margin-top: 70px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            min-height: calc(100vh - 70px);
+            background: #f8f9fa;
+        }
+        
+        
+    </style>
 </head>
 <body>
     <?php include '../includes/header.php'; ?>
+    <?php include '../includes/sidebar.php'; ?>
 
+    <!-- Main Content -->
     <div class="dashboard-container">
         <!-- Welcome Section -->
         <div class="welcome-section">
@@ -43,13 +59,12 @@ checkPermission(['giangvien']);
                 </div>
             </div>
             <div class="welcome-actions">
-                <button class="btn btn-primary">
+                <a href="kpi_submission.php" class="btn btn-primary">
                     <i class="fas fa-plus me-2"></i>Nhập KPI mới
-                </button>
+                </a>
             </div>
         </div>
-
-        <!-- Stats Grid -->
+<!-- Stats Grid -->
         <div class="stats-grid">
             <div class="stat-card primary">
                 <div class="stat-icon">
@@ -110,67 +125,67 @@ checkPermission(['giangvien']);
         <div class="content-grid">
             <!-- Left Column -->
             <div class="content-column">
-            <!-- Quick Actions -->
-            <div class="dashboard-card">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        <i class="fas fa-bolt me-2"></i>Thao tác nhanh
-                    </h3>
-                </div>
-                <div class="card-body">
-                    <div class="quick-actions">
-                        <a href="kpi_submission.php" class="action-btn primary">
-                            <div class="action-icon">
-                                <i class="fas fa-upload"></i>
-                            </div>
-                            <div class="action-text">
-                                <div class="action-title">Nhập KPI</div>
-                                <div class="action-desc">Cập nhật minh chứng mới</div>
-                            </div>
-                        </a>
+                <!-- Quick Actions -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-bolt me-2"></i>Thao tác nhanh
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="quick-actions">
+                            <a href="kpi_submission.php" class="action-btn primary">
+                                <div class="action-icon">
+                                    <i class="fas fa-upload"></i>
+                                </div>
+                                <div class="action-text">
+                                    <div class="action-title">Nhập KPI</div>
+                                    <div class="action-desc">Cập nhật minh chứng mới</div>
+                                </div>
+                            </a>
 
-                        <a href="teaching_schedule.php" class="action-btn info">
-                            <div class="action-icon">
-                                <i class="fas fa-calendar-alt"></i>
-                            </div>
-                            <div class="action-text">
-                                <div class="action-title">Lịch giảng dạy</div>
-                                <div class="action-desc">Quản lý lịch trình & bài tập</div>
-                            </div>
-                        </a>
+                            <a href="teaching_schedule.php" class="action-btn info">
+                                <div class="action-icon">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                                <div class="action-text">
+                                    <div class="action-title">Lịch giảng dạy</div>
+                                    <div class="action-desc">Quản lý lịch trình & bài tập</div>
+                                </div>
+                            </a>
 
-                        <a href="my_reports.php" class="action-btn success">
-                            <div class="action-icon">
-                                <i class="fas fa-chart-bar"></i>
-                            </div>
-                            <div class="action-text">
-                                <div class="action-title">Xem báo cáo</div>
-                                <div class="action-desc">Kết quả đánh giá chi tiết</div>
-                            </div>
-                        </a>
+                            <a href="my_reports.php" class="action-btn success">
+                                <div class="action-icon">
+                                    <i class="fas fa-chart-bar"></i>
+                                </div>
+                                <div class="action-text">
+                                    <div class="action-title">Xem báo cáo</div>
+                                    <div class="action-desc">Kết quả đánh giá chi tiết</div>
+                                </div>
+                            </a>
 
-                        <a href="#" class="action-btn warning">
-                            <div class="action-icon">
-                                <i class="fas fa-file-export"></i>
-                            </div>
-                            <div class="action-text">
-                                <div class="action-title">Xuất báo cáo</div>
-                                <div class="action-desc">PDF, Excel, Word</div>
-                            </div>
-                        </a>
+                            <a href="#" class="action-btn warning">
+                                <div class="action-icon">
+                                    <i class="fas fa-file-export"></i>
+                                </div>
+                                <div class="action-text">
+                                    <div class="action-title">Xuất báo cáo</div>
+                                    <div class="action-desc">PDF, Excel, Word</div>
+                                </div>
+                            </a>
 
-                        <a href="#" class="action-btn secondary">
-                            <div class="action-icon">
-                                <i class="fas fa-bell"></i>
-                            </div>
-                            <div class="action-text">
-                                <div class="action-title">Thông báo</div>
-                                <div class="action-desc">Tin nhắn từ trưởng khoa</div>
-                            </div>
-                        </a>
+                            <a href="#" class="action-btn secondary">
+                                <div class="action-icon">
+                                    <i class="fas fa-bell"></i>
+                                </div>
+                                <div class="action-text">
+                                    <div class="action-title">Thông báo</div>
+                                    <div class="action-desc">Tin nhắn từ trưởng khoa</div>
+                                </div>
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
 
                 <!-- Recent KPI Submissions -->
                 <div class="dashboard-card">
@@ -383,11 +398,35 @@ checkPermission(['giangvien']);
                 </div>
             </div>
         </div>
-    </div>
-
-    <?php include '../includes/footer.php'; ?>
-
+         <?php include '../includes/footer.php'; ?>
+</div> <!-- Kết thúc dashboard-container -->
+           
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/giangvien.js"></script>
-</body>
-</html>
+    <script>
+        // JavaScript cho toggle sidebar
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.body.classList.toggle('collapsed');
+        });
+
+        // JavaScript cho mobile menu
+        document.getElementById('mobileMenuToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('mobile-open');
+        });
+
+        // Đóng sidebar khi click ra ngoài trên mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.querySelector('.sidebar');
+            const mobileToggle = document.getElementById('mobileMenuToggle');
+            
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(event.target) && 
+                !mobileToggle.contains(event.target)) {
+                sidebar.classList.remove('mobile-open');
+            }
+        });
+    </script>
+    <script src="../js/giangvien.js"></script>
+    <script src="../js/sidebar.js"></script>
+    </body>
+    </html>
+    
