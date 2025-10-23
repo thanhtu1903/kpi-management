@@ -1,10 +1,10 @@
 <?php
-session_start();
+require_once '../includes/config.php';
 require_once '../includes/headeradmin.php';
 require_once '../includes/sidebaradmin.php';
 
 // Kết nối database
-require_once '../includes/config.php';
+
 
 try {
     // Tổng số người dùng
