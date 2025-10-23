@@ -1,3 +1,10 @@
+:root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --accent-color: #1abc9c;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+        }
 .dashboard-container {
     margin-left: 280px;
     margin-top: 70px;
@@ -20,7 +27,11 @@
         padding: 15px;
     }
 }
-
+.alert-info-custom {
+    background-color: rgba(52, 152, 219, 0.1);
+    border: 1px solid rgba(52, 152, 219, 0.2);
+    border-radius: 8px;
+}
 /* CSS cho trang lịch giảng dạy */
 .tab-nav {
     display: flex;
@@ -144,14 +155,13 @@
 }
 
 .welcome-section {
-    background: white;
-    color: white;
-    padding: 30px;
-    border-radius: 15px;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    color: black;
-}
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
 .welcome-section,
 .stats-grid,
 .content-grid {
@@ -160,27 +170,57 @@
     margin-right: 20px;
 }
 .welcome-title {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 10px;
-}
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
 
 .welcome-subtitle {
-    font-size: 1.1rem;
-    opacity: 0.9;
-    margin-bottom: 0;
+            opacity: 0.9;
+            margin-bottom: 0;
+        }
+.welcome-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+.meta-item {
+    background: rgba(255,255,255,0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
 }
-
 .dashboard-card {
     background: white;
-    border-radius: 15px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    border: none;
-    margin-left: 40px;
-    margin-right: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+    overflow: hidden;
 }
 
 .card-body {
     padding: 30px;
 }
-/* Thêm CSS cho phần chọn năm học và học kỳ */ .form-select-sm { padding: 0.25rem 0.5rem; font-size: 0.875rem; height: auto; } .form-label-sm { font-size: 0.875rem; margin-bottom: 0.25rem; font-weight: bold; color: #333; } .schedule-header .row .col-md-4:first-child p { margin-bottom: 0.5rem; }
+/* Thêm CSS cho phần chọn năm học và học kỳ */ 
+.form-select-sm { padding: 0.25rem 0.5rem; 
+    font-size: 0.875rem; height: auto; } 
+.form-label-sm { font-size: 0.875rem; 
+    margin-bottom: 0.25rem; 
+    font-weight: bold; 
+    color: #333; } 
+    .schedule-header 
+    .row 
+    .col-md-4:first-child p { margin-bottom: 0.5rem; }
+#hocphan-section {
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s ease-in-out;
+}
+
+#hocphan-section[style*="display: block"] {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.form-select-custom, .form-control-custom {
+    transition: all 0.3s ease;
+}

@@ -1,0 +1,384 @@
+/* Header Styles */
+.header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Page Title */
+.page-title {
+    font-weight: 700;
+    font-size: 1.5rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    padding-left: 1rem;
+}
+
+.page-title::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 70%;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 2px;
+}
+
+/* Notification Dropdown */
+.notification-dropdown .dropdown-toggle {
+    position: relative;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notification-dropdown .dropdown-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+    border: 2px solid #667eea;
+    font-size: 0.7rem;
+    min-width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 10px rgba(255, 107, 107, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 107, 107, 0);
+    }
+}
+
+/* Notification Dropdown Menu */
+.notification-dropdown .dropdown-menu {
+    width: 350px;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    animation: slideDown 0.3s ease;
+}
+
+.notification-dropdown .dropdown-header {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border-radius: 15px 15px 0 0;
+    padding: 1rem;
+    font-weight: 600;
+}
+
+.notification-dropdown .dropdown-item {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.notification-dropdown .dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.notification-dropdown .dropdown-item:hover {
+    background: rgba(102, 126, 234, 0.1);
+    transform: translateX(5px);
+}
+
+.notification-dropdown .dropdown-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: #667eea;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.notification-dropdown .dropdown-item:hover::before {
+    opacity: 1;
+}
+
+.notification-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+.notification-icon.success {
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+.notification-icon.warning {
+    background: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+}
+
+.notification-icon.info {
+    background: rgba(23, 162, 184, 0.1);
+    color: #17a2b8;
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-title {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.25rem;
+    font-size: 0.9rem;
+}
+
+.notification-time {
+    color: #6c757d;
+    font-size: 0.8rem;
+}
+
+/* User Dropdown */
+.user-dropdown .dropdown-toggle {
+    padding: 0.5rem;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.user-dropdown .dropdown-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.user-avatar {
+    width: 45px;
+    height: 45px;
+    background: linear-gradient(45deg, #ff6b6b, #667eea);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.user-dropdown .dropdown-toggle:hover .user-avatar {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.user-info {
+    text-align: left;
+}
+
+.user-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.user-role {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+/* User Dropdown Menu */
+.user-dropdown .dropdown-menu {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    animation: slideDown 0.3s ease;
+    min-width: 200px;
+}
+
+.user-dropdown .dropdown-item {
+    padding: 0.75rem 1rem;
+    color: #333;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    border-radius: 8px;
+    margin: 2px 8px;
+    width: auto;
+}
+
+.user-dropdown .dropdown-item:hover {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    transform: translateX(5px);
+}
+
+.user-dropdown .dropdown-item i {
+    width: 20px;
+    margin-right: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.user-dropdown .dropdown-divider {
+    margin: 0.5rem 0;
+    opacity: 0.1;
+}
+
+/* Dropdown Animations */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Header Responsive */
+@media (max-width: 768px) {
+    .header {
+        padding: 0.75rem 0;
+    }
+    
+    .page-title {
+        font-size: 1.2rem;
+        padding-left: 0.5rem;
+    }
+    
+    .page-title::before {
+        width: 3px;
+    }
+    
+    .user-info {
+        display: none !important;
+    }
+    
+    .user-dropdown .dropdown-toggle {
+        padding: 0.25rem;
+    }
+    
+    .user-avatar {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+    
+    .notification-dropdown .dropdown-menu {
+        width: 300px;
+        right: -50px !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .notification-dropdown .dropdown-menu {
+        width: 280px;
+        right: -80px !important;
+    }
+    
+    .page-title {
+        font-size: 1.1rem;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .notification-dropdown .dropdown-menu,
+    .user-dropdown .dropdown-menu {
+        background: rgba(40, 40, 40, 0.95);
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .notification-dropdown .dropdown-item,
+    .user-dropdown .dropdown-item {
+        color: #f8f9fa;
+    }
+    
+    .notification-title {
+        color: #f8f9fa;
+    }
+    
+    .notification-time {
+        color: #adb5bd;
+    }
+}
+
+/* Loading state */
+.header.loading .page-title::after {
+    content: '';
+    position: absolute;
+    right: -20px;
+    top: 50%;
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: translateY(-50%) rotate(0deg); }
+    100% { transform: translateY(-50%) rotate(360deg); }
+}
+
+/* Breadcrumb styles (if used in header) */
+.breadcrumb {
+    background: transparent;
+    margin-bottom: 0;
+    padding: 0;
+}
+
+.breadcrumb-item a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.breadcrumb-item a:hover {
+    color: white;
+}
+
+.breadcrumb-item.active {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    color: rgba(255, 255, 255, 0.5);
+}
