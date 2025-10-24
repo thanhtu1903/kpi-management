@@ -16,10 +16,15 @@ if (!isset($_SESSION['user_id'])) {
 </head>
 <body>
     <!-- Header -->
-    <div class="header">
+    <div class="header" id="header">
         <div class="container-fluid">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center">
+                    <!-- Sidebar Toggle Button for Mobile -->
+                    <button class="btn btn-sm btn-outline-light me-3 d-lg-none" id="mobileSidebarToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    
                     <!-- Page Title -->
                     <h4 class="page-title mb-0 text-white">
                         <?php 
@@ -31,7 +36,6 @@ if (!isset($_SESSION['user_id'])) {
                             'kpi_groups.php' => 'Nhóm KPI',
                             'kpi_indicators.php' => 'Chỉ số KPI',
                             'evaluation_cycles.php' => 'Kỳ đánh giá',
-                            // Add more page titles as needed
                         ];
                         $currentPage = basename($_SERVER['PHP_SELF']);
                         echo $pageTitles[$currentPage] ?? 'KPI System Admin';
@@ -149,6 +153,64 @@ if (!isset($_SESSION['user_id'])) {
     <script>
         // Header functionality
         document.addEventListener('DOMContentLoaded', function() {
+            const header = document.getElementById('header');
+            const sidebar = document.getElementById('sidebar');
+            
+            // Function to update header position based on sidebar state
+            function updateHeaderPosition() {
+                if (sidebar.classList.contains('collapsed')) {
+                    header.style.marginLeft = '70px';
+                    header.style.width = 'calc(100% - 70px)';
+                } else {
+                    header.style.marginLeft = '280px';
+                    header.style.width = 'calc(100% - 280px)';
+                }
+            }
+            
+            // Initialize header position
+            updateHeaderPosition();
+            
+            // Observe sidebar for changes
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.attributeName === 'class') {
+                        updateHeaderPosition();
+                    }
+                });
+            });
+            
+            observer.observe(sidebar, {
+                attributes: true,
+                attributeFilter: ['class']
+            });
+            
+            // Mobile sidebar toggle
+            document.getElementById('mobileSidebarToggle').addEventListener('click', function() {
+                sidebar.classList.toggle('mobile-show');
+            });
+            
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function(e) {
+                if (window.innerWidth < 992 && !sidebar.contains(e.target) && 
+                    !e.target.closest('#mobileSidebarToggle') && 
+                    sidebar.classList.contains('mobile-show')) {
+                    sidebar.classList.remove('mobile-show');
+                }
+            });
+            
+            // Handle window resize
+            function handleResize() {
+                if (window.innerWidth < 992) {
+                    header.style.marginLeft = '0';
+                    header.style.width = '100%';
+                } else {
+                    updateHeaderPosition();
+                }
+            }
+            
+            window.addEventListener('resize', handleResize);
+            handleResize();
+            
             // Notification dropdown auto-close when clicking outside
             document.addEventListener('click', function(e) {
                 const notificationDropdown = document.querySelector('.notification-dropdown');
@@ -186,39 +248,8 @@ if (!isset($_SESSION['user_id'])) {
                 });
             });
 
-            // Auto-hide notifications after 5 seconds
-            const notificationAlerts = document.querySelectorAll('.alert');
-            notificationAlerts.forEach(alert => {
-                if (alert.classList.contains('alert-dismissible')) {
-                    setTimeout(() => {
-                        const bsAlert = new bootstrap.Alert(alert);
-                        bsAlert.close();
-                    }, 5000);
-                }
-            });
-
-            // Smooth scroll to top when clicking on page title
-            document.querySelector('.page-title').addEventListener('click', function(e) {
-                e.preventDefault();
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-            });
-
-            // Add active state to current page in user dropdown
-            const currentPage = window.location.pathname.split('/').pop();
-            const dropdownLinks = document.querySelectorAll('.user-dropdown .dropdown-item');
-            dropdownLinks.forEach(link => {
-                const href = link.getAttribute('href');
-                if (href && href.includes(currentPage)) {
-                    link.classList.add('active');
-                }
-            });
-
             // Header scroll effect
             let lastScrollTop = 0;
-            const header = document.querySelector('.header');
             
             window.addEventListener('scroll', function() {
                 const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -233,42 +264,6 @@ if (!isset($_SESSION['user_id'])) {
                 
                 lastScrollTop = scrollTop;
             });
-
-            // Real-time clock in header (optional)
-            function updateClock() {
-                const now = new Date();
-                const timeString = now.toLocaleTimeString('vi-VN', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit'
-                });
-                const dateString = now.toLocaleDateString('vi-VN', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                });
-                
-                // You can add this to header if needed
-                // document.getElementById('header-clock').textContent = timeString + ' - ' + dateString;
-            }
-            
-            // Update clock every second
-            setInterval(updateClock, 1000);
-            updateClock();
-
-            // Responsive header adjustments
-            function handleResize() {
-                const header = document.querySelector('.header');
-                if (window.innerWidth < 768) {
-                    header.classList.add('mobile-view');
-                } else {
-                    header.classList.remove('mobile-view');
-                }
-            }
-
-            window.addEventListener('resize', handleResize);
-            handleResize();
 
             // Keyboard shortcuts
             document.addEventListener('keydown', function(e) {
@@ -291,19 +286,6 @@ if (!isset($_SESSION['user_id'])) {
                         }
                     });
                 }
-            });
-
-            // Add loading state to header when page is loading
-            let isLoading = false;
-            
-            document.addEventListener('DOMContentLoaded', function() {
-                isLoading = true;
-                document.body.classList.add('page-loading');
-            });
-
-            window.addEventListener('load', function() {
-                isLoading = false;
-                document.body.classList.remove('page-loading');
             });
 
             // Prevent dropdown close when clicking inside
@@ -330,16 +312,6 @@ if (!isset($_SESSION['user_id'])) {
                     badge.style.display = 'none';
                 } else {
                     badge.style.display = 'flex';
-                }
-            },
-            
-            // Toggle header visibility
-            toggleHeader: function(show) {
-                const header = document.querySelector('.header');
-                if (show) {
-                    header.style.display = 'block';
-                } else {
-                    header.style.display = 'none';
                 }
             }
         };

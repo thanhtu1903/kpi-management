@@ -63,7 +63,7 @@ function isExactPage($page_name) {
                     <i class="fas fa-users"></i><span>Quản lý người dùng</span><i class="fas fa-chevron-down arrow"></i>
                 </a>
                 <ul class="submenu">
-                    <li><a class="submenu-link <?= isExactPage('index.php') && strpos($current_script, '/admin/') !== false && !strpos($current_script, '/admin/departments/') ? 'active' : '' ?>" href="../admin/index.php">Danh sách người dùng</a></li>
+                    <li><a class="submenu-link <?= isExactPage('index.php') && strpos($current_script, '/admin/departments') !== false && !strpos($current_script, '/admin/departments/') ? 'active' : '' ?>" href="../admin/departments.php">Danh sách người dùng</a></li>
                     <li><a class="submenu-link <?= isExactPage('users.php') ? 'active' : '' ?>" href="../admin/users.php">Thêm người dùng</a></li>
                 </ul>
             </li>
