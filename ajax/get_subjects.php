@@ -60,9 +60,12 @@ try {
             'name' => $subject['subject_name'],
             'credits' => $subject['credits'],
             'semester' => $subject['semester'],
+            'theory_hours' => $subject['theory_hours'],
+            'practice_hours' => $subject['practice_hours'],
             'display_text' => $subject['subject_code'] . ' - ' . $subject['subject_name']
         ];
     }, $subjects);
+
 
     echo json_encode(['success' => true, 'subjects' => $result]);
 

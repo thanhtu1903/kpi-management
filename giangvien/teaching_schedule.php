@@ -151,7 +151,18 @@ if (!isset($hour_tables)) $hour_tables = [];
                         </div>
                     </div>
                 </div>
-                
+                <!-- Thêm sau phần học phần -->
+                <div class="row mb-4" id="class-section" style="display: none;">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Lớp học phần:</strong></label>
+                            <select class="form-select form-select-custom" id="class-dropdown">
+                                <option value="">-- Chọn lớp --</option>
+                                <!-- Các option sẽ được tạo tự động -->
+                            </select>
+                        </div>
+                    </div>
+                </div>
                 <!-- TAB NAVIGATION -->
                 <div class="tab-nav">
                     <button class="tab-btn active" onclick="switchTab('lich-trinh')">
@@ -181,14 +192,28 @@ if (!isset($hour_tables)) $hour_tables = [];
                     </div>
 
                     <!-- Course Information -->
-                    <div class="info-section">
+                     <div class="info-section">
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="mb-3">
-                                    <label class="form-label"><strong>Tổng số giờ giảng:</strong></label>
-                                    <input type="number" class="form-control form-control-custom" id="gio_tong-lt" placeholder="Nhập tổng số giờ" min="1">
+                                    <label class="form-label"><strong>Tổng số giờ lý thuyết:</strong></label>
+                                    <input type="number" class="form-control form-control-custom" id="gio_tong-lt" placeholder="Sẽ tự động hiển thị" readonly>
                                 </div>
                             </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label"><strong>Số giờ giảng trực tiếp:</strong></label>
+                                    <input type="number" class="form-control form-control-custom" id="gio_tructiep-lt" placeholder="Tự động tính" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label"><strong>Số giờ học online (20%):</strong></label>
+                                    <input type="number" class="form-control form-control-custom" id="gio_online-lt" placeholder="Tự động tính" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label class="form-label"><strong>Chọn bảng giờ:</strong></label>
@@ -198,21 +223,6 @@ if (!isset($hour_tables)) $hour_tables = [];
                                             <option value="<?php echo $value; ?>"><?php echo $label; ?></option>
                                         <?php endforeach; ?>
                                     </select>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="mb-3">
-                                    <label class="form-label"><strong>Số giờ giảng trực tiếp:</strong></label>
-                                    <input type="text" class="form-control form-control-custom" id="gio_tructiep-lt" placeholder="Số giờ trực tiếp" readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="mb-3">
-                                    <label class="form-label"><strong>Số giờ học online (20%):</strong></label>
-                                    <input type="number" class="form-control form-control-custom" id="gio_online-lt" placeholder="Số giờ online" min="0">
-                                    <div id="gio_online_error" class="text-danger mt-1" style="display:none;">
-                                        Số giờ online phải bằng 20% tổng số giờ lý thuyết!
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -235,6 +245,7 @@ if (!isset($hour_tables)) $hour_tables = [];
                             </div>
                         </div>
                     </div>
+
 
                     <!-- Schedule Table -->
                     <div class="table-responsive">
@@ -675,8 +686,11 @@ handleHourTableChange(
                                     option.textContent = subject.display_text || subject.name;
                                     option.dataset.code = subject.code;
                                     option.dataset.credits = subject.credits;
+                                    option.dataset.theoryHours = subject.theory_hours;   // 🔹 thêm
+                                    option.dataset.practiceHours = subject.practice_hours; // 🔹 thêm
                                     optgroup.appendChild(option);
                                 });
+
                                 
                                 hocphanSelect.appendChild(optgroup);
                             });
@@ -714,25 +728,46 @@ handleHourTableChange(
                 mahpInput.value = '';
             }
         });
-
         // CẬP NHẬT MÃ HỌC PHẦN KHI CHỌN HỌC PHẦN
         document.getElementById('hocphan').addEventListener('change', function() {
             const selectedOption = this.options[this.selectedIndex];
             const mahpInput = document.getElementById('mahp');
-            
+            const tongLt = document.getElementById('gio_tong-lt');
+            const trucTiepLt = document.getElementById('gio_tructiep-lt');
+            const onlineLt = document.getElementById('gio_online-lt');
+
             if (selectedOption.value && selectedOption.dataset.code) {
                 mahpInput.value = selectedOption.dataset.code;
-                // Hiệu ứng khi chọn thành công
-                mahpInput.style.borderColor = '#28a745';
-                mahpInput.style.backgroundColor = '#f8fff9';
-                setTimeout(() => {
-                    mahpInput.style.borderColor = '';
-                    mahpInput.style.backgroundColor = '';
-                }, 1500);
+
+                // 🟢 Lấy dữ liệu số giờ từ thuộc tính dataset
+                const theoryHours = parseFloat(selectedOption.dataset.theoryHours || 0);
+                const tongGio = theoryHours;
+                const onlineGio = +(tongGio * 0.2).toFixed(1);
+                const trucTiepGio = tongGio - onlineGio;
+
+                // 🟢 Hiển thị vào các ô input
+                tongLt.value = tongGio;
+                trucTiepLt.value = trucTiepGio;
+                onlineLt.value = onlineGio;
+
+                // 🟢 Hiệu ứng khi cập nhật
+                [tongLt, trucTiepLt, onlineLt].forEach(input => {
+                    input.style.borderColor = '#28a745';
+                    input.style.backgroundColor = '#f8fff9';
+                    setTimeout(() => {
+                        input.style.borderColor = '';
+                        input.style.backgroundColor = '';
+                    }, 1500);
+                });
+
             } else {
                 mahpInput.value = '';
+                tongLt.value = '';
+                trucTiepLt.value = '';
+                onlineLt.value = '';
             }
         });
+
 
         // Hàm test kết nối AJAX
         function testAjaxConnection() {
@@ -763,6 +798,7 @@ handleHourTableChange(
             console.log('Page loaded, testing AJAX connection...');
             testAjaxConnection();
         });
+        
     </script>
     <script>
         // JavaScript cho toggle sidebar
@@ -784,6 +820,63 @@ handleHourTableChange(
                 !sidebar.contains(event.target) && 
                 !mobileToggle.contains(event.target)) {
                 sidebar.classList.remove('mobile-open');
+            }
+        });
+    </script>
+    <script>
+                // Hàm tạo mã lớp tự động
+        function generateClassCode(selectedYear, selectedSemester, subjectCode, hasPracticeHours, classCount, teachingFormat) {
+            // Lấy 2 số cuối năm học (ví dụ: 2025 -> 25)
+            const yearShort = selectedYear.substring(2, 4);
+            
+            // Xác định học kỳ a/b dựa trên số lớp
+            const semesterType = classCount % 2 === 0 ? 'a' : 'b';
+            const semesterCode = selectedSemester + semesterType;
+            
+            // Kiểm tra có thực hành không
+            const practiceCode = hasPracticeHours ? '(BT)' : '';
+            
+            // Format số lớp (01, 02, ...)
+            const classNumber = classCount.toString().padStart(2, '0');
+            
+            // Tạo mã lớp hoàn chỉnh
+            return `${yearShort}${semesterCode}_${subjectCode}_${practiceCode}_${classNumber}_${teachingFormat}`;
+        }
+
+        // Xử lý khi chọn học phần
+        document.getElementById('hocphan').addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const yearSelect = document.getElementById('namhoc');
+            const classDropdown = document.getElementById('class-dropdown'); // Dropdown mới
+            
+            if (selectedOption.value && yearSelect.value) {
+                // Lấy thông tin từ các dropdown
+                const selectedYear = yearSelect.options[yearSelect.selectedIndex].text;
+                const selectedSemester = selectedOption.dataset.semester; // Cần thêm semester vào dataset
+                const subjectCode = selectedOption.dataset.code;
+                const hasPracticeHours = parseInt(selectedOption.dataset.practiceHours) > 0;
+                
+                // Tạo dropdown lớp học
+                classDropdown.innerHTML = '<option value="">-- Chọn lớp --</option>';
+                
+                // Tạo 2 lớp cho mỗi học kỳ (a và b)
+                for (let i = 1; i <= 2; i++) {
+                    const classCount = i;
+                    const teachingFormat = 'tructiep'; // Có thể thêm dropdown chọn hình thức
+                    
+                    const classCode = generateClassCode(selectedYear, selectedSemester, subjectCode, hasPracticeHours, classCount, teachingFormat);
+                    
+                    const option = document.createElement('option');
+                    option.value = classCode;
+                    option.textContent = classCode;
+                    option.dataset.classCount = classCount;
+                    option.dataset.teachingFormat = teachingFormat;
+                    
+                    classDropdown.appendChild(option);
+                }
+                
+                // Hiển thị dropdown lớp học
+                document.getElementById('class-section').style.display = 'block';
             }
         });
     </script>
